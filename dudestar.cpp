@@ -83,6 +83,8 @@ DudeStar::~DudeStar()
 	stream << "CALLSIGN:" << ui->callsignEdit->text() << ENDLINE;
 	stream << "DMRID:" << ui->dmridEdit->text() << ENDLINE;
 	stream << "DMRPASSWORD:" << ui->dmrpwEdit->text() << ENDLINE;
+    stream << "DMROPTIONS:" << ui->dmrOptions->text() << ENDLINE;
+    stream << "DMRREPEATER:" << ui->dmrRepeaterId->text() << ENDLINE;
 	stream << "DMRTGID:" << ui->dmrtgEdit->text() << ENDLINE;
 	stream << "MYCALL:" << ui->mycallEdit->text().simplified() << ENDLINE;
 	stream << "URCALL:" << ui->urcallEdit->text().simplified() << ENDLINE;
@@ -95,18 +97,21 @@ DudeStar::~DudeStar()
 
 void DudeStar::about()
 {
-    QMessageBox::about(this, tr("About DUDE-Star"),
-					   tr("DUDE-Star git build %1\nCopyright (C) 2019 Doug McLain AD8DP\n\n"
-                          "This program is free software; you can redistribute it"
-                          "and/or modify it under the terms of the GNU General Public "
-                          "License as published by the Free Software Foundation; "
-                          "version 2.\n\nThis program is distributed in the hope that it "
-                          "will be useful, but WITHOUT ANY WARRANTY; without even "
-                          "the implied warranty of MERCHANTABILITY or FITNESS FOR A "
-                          "PARTICULAR PURPOSE. See the GNU General Public License for "
-                          "more details.\n\nYou should have received a copy of the GNU "
-                          "General Public License along with this program. "
-						  "If not, see <http://www.gnu.org/licenses/>").arg(VERSION_NUMBER));
+    QMessageBox::about(this, tr("Sobre DUDE-Star versio EA3IHG"),
+                       tr("Aquesta es una distribució de l'eina DUDE-Star "
+                          "creada per Jordi Viladoms EA3IHG a partir del codi original "
+                          "de Doug McLain AD8DP amb funcionalitats i millores suggerides "
+                          "per radioaficionats de Catalunya. \n"
+                          "Aquest programa és programari lliure; el podeu redistribuir "
+                          "i / o modificar sota els termes del GNU General Public "
+                          "license publicada per la Free Software Foundation; "
+                          "Aquest programa es distribueix amb l'esperança que "
+                          "serà útil, però SENSE CAP GARANTIA; sense ni tan sols "
+                          "la garantia implícita de COMERCIALITZACIÓ o IDONEITAT PER A "
+                          "FINALITAT PARTICULAR. Vegeu la llicència pública general de GNU per "
+                          "més detalls. Hauríeu d'haver rebut una còpia del GNU "
+                          "Llicència pública general juntament amb aquest programa."
+                          "Si no, consulteu <http://www.gnu.org/licenses/>").arg(VERSION_NUMBER));
 }
 
 void DudeStar::init_gui()
@@ -173,7 +178,7 @@ void DudeStar::init_gui()
 	connect(ui->volumeSlider, SIGNAL(valueChanged(int)), this, SLOT(process_volume_changed(int)));
 	connect(ui->inmuteButton, SIGNAL(clicked()), this, SLOT(process_input_mute_button()));
 	connect(ui->involSlider, SIGNAL(valueChanged(int)), this, SLOT(process_input_volume_changed(int)));
-	ui->statusBar->insertPermanentWidget(0, status_txt, 1);
+    ui->statusBar->insertPermanentWidget(0, status_txt, 1);
 	//connect(ui->checkBoxSWRX, SIGNAL(stateChanged(int)), this, SLOT(swrx_state_changed(int)));
 	connect(ui->checkBoxSWTX, SIGNAL(stateChanged(int)), this, SLOT(swtx_state_changed(int)));
     ui->rptr1->setTextInteractionFlags(Qt::TextSelectableByMouse);
@@ -295,6 +300,8 @@ void DudeStar::process_mode_change(const QString &m)
 		process_ref_hosts();
 		ui->comboMod->setEnabled(true);
 		ui->dmridEdit->setEnabled(false);
+        ui->dmrRepeaterId->setEnabled(false);
+        ui->dmrOptions->setEnabled(false);
 		ui->dmrpwEdit->setEnabled(false);
 		ui->dmrtgEdit->setEnabled(false);
 		ui->dmrccEdit->setEnabled(false);
@@ -318,6 +325,8 @@ void DudeStar::process_mode_change(const QString &m)
 		process_dcs_hosts();
 		ui->comboMod->setEnabled(true);
 		ui->dmridEdit->setEnabled(false);
+        ui->dmrRepeaterId->setEnabled(false);
+        ui->dmrOptions->setEnabled(false);
 		ui->dmrpwEdit->setEnabled(false);
 		ui->dmrtgEdit->setEnabled(false);
 		ui->dmrccEdit->setEnabled(false);
@@ -341,6 +350,8 @@ void DudeStar::process_mode_change(const QString &m)
 		process_xrf_hosts();
 		ui->comboMod->setEnabled(true);
 		ui->dmridEdit->setEnabled(false);
+        ui->dmrRepeaterId->setEnabled(false);
+        ui->dmrOptions->setEnabled(false);
 		ui->dmrpwEdit->setEnabled(false);
 		ui->dmrtgEdit->setEnabled(false);
 		ui->dmrccEdit->setEnabled(false);
@@ -364,6 +375,8 @@ void DudeStar::process_mode_change(const QString &m)
 		process_ysf_hosts();
 		ui->comboMod->setEnabled(false);
 		ui->dmridEdit->setEnabled(false);
+        ui->dmrRepeaterId->setEnabled(false);
+        ui->dmrOptions->setEnabled(false);
 		ui->dmrpwEdit->setEnabled(false);
 		ui->dmrtgEdit->setEnabled(false);
 		ui->dmrccEdit->setEnabled(false);
@@ -387,8 +400,10 @@ void DudeStar::process_mode_change(const QString &m)
 		process_dmr_hosts();
 		ui->comboMod->setEnabled(false);
 		ui->dmridEdit->setEnabled(true);
+        ui->dmrRepeaterId->setEnabled(true);
+        ui->dmrOptions->setEnabled(true);
 		ui->dmrpwEdit->setEnabled(true);
-		ui->dmrtgEdit->setEnabled(true);
+        ui->dmrtgEdit->setEnabled(true);
 		ui->dmrccEdit->setEnabled(true);
 		ui->dmrslotEdit->setEnabled(true);
 		ui->checkBoxDMRPC->setEnabled(true);
@@ -410,6 +425,8 @@ void DudeStar::process_mode_change(const QString &m)
 		process_p25_hosts();
 		ui->comboMod->setEnabled(false);
 		ui->dmridEdit->setEnabled(true);
+        ui->dmrRepeaterId->setEnabled(false);
+        ui->dmrOptions->setEnabled(false);
 		ui->dmrpwEdit->setEnabled(false);
 		ui->dmrtgEdit->setEnabled(true);
 		ui->dmrccEdit->setEnabled(false);
@@ -433,6 +450,8 @@ void DudeStar::process_mode_change(const QString &m)
 		process_nxdn_hosts();
 		ui->comboMod->setEnabled(false);
 		ui->dmridEdit->setEnabled(true);
+        ui->dmrRepeaterId->setEnabled(false);
+        ui->dmrOptions->setEnabled(false);
 		ui->dmrtgEdit->setEnabled(false);
 		ui->dmrccEdit->setEnabled(false);
 		ui->dmrslotEdit->setEnabled(false);
@@ -455,6 +474,9 @@ void DudeStar::process_mode_change(const QString &m)
 		process_m17_hosts();
 		ui->comboMod->setEnabled(true);
 		ui->dmridEdit->setEnabled(false);
+        ui->dmrRepeaterId->setEnabled(false);
+        ui->dmrOptions->setEnabled(false);
+        ui->dmrpwEdit->setEnabled(false);
 		ui->dmrtgEdit->setEnabled(false);
 		ui->dmrccEdit->setEnabled(false);
 		ui->dmrslotEdit->setEnabled(false);
@@ -1012,7 +1034,7 @@ void DudeStar::process_settings()
 				if(sl.at(0) == "PLAYBACK"){
 					ui->AudioOutCombo->setCurrentText(sl.at(1).simplified());
 				}
-				if(sl.at(0) == "CAPTURE"){
+                if(sl.at(0) == "CAPTURE"){
 					ui->AudioInCombo->setCurrentText(sl.at(1).simplified());
 				}
 				if(sl.at(0) == "MODE"){
@@ -1108,11 +1130,17 @@ void DudeStar::process_settings()
 					ui->callsignEdit->setText(sl.at(1).simplified());
 				}
 				if(sl.at(0) == "DMRID"){
-					ui->dmridEdit->setText(sl.at(1).simplified());
+                    ui->dmridEdit->setText(sl.at(1).simplified());
 				}
+                if(sl.at(0) == "DMROPTIONS"){
+                    ui->dmrOptions->setText(sl.at(1).simplified());
+                }
 				if(sl.at(0) == "DMRPASSWORD"){
 					ui->dmrpwEdit->setText(sl.at(1).simplified());
 				}
+                if(sl.at(0) == "DMRREPEATER"){
+                    ui->dmrRepeaterId->setText(sl.at(1).simplified());
+                }
 				if(sl.at(0) == "DMRTGID"){
 					ui->dmrtgEdit->setText(sl.at(1).simplified());
 				}
@@ -1173,9 +1201,18 @@ void DudeStar::process_connect()
 		ui->modeCombo->setEnabled(true);
         ui->hostCombo->setEnabled(true);
         ui->callsignEdit->setEnabled(true);
-		ui->dmridEdit->setEnabled(true);
 		ui->txButton->setDisabled(true);
         status_txt->setText("No connectat");
+
+
+        if((protocol == "DMR") || (protocol == "P25")){
+            ui->dmridEdit->setEnabled(true);
+            ui->dmrpwEdit->setEnabled(true);
+            ui->dmrRepeaterId->setEnabled(true);
+            if(hostname.startsWith("DMR+")){
+                ui->dmrOptions->setEnabled(true);
+            }
+        }
 
 		if((protocol == "DCS") || (protocol == "XRF") || (protocol == "M17")){
 			ui->comboMod->setEnabled(true);
@@ -1300,12 +1337,16 @@ void DudeStar::process_connect()
 			dmrid = ui->dmridEdit->text().toUInt();
 			dmr_password = (ui->dmrpwEdit->text().isEmpty()) ? sl.at(2).simplified() : ui->dmrpwEdit->text();
 			dmr_destid = ui->dmrtgEdit->text().toUInt();
-            dmr_options = ui->dmrOptions->text();
-            dmr_repeater = ui->dmrRepeaterId->text();
-            QString aux_repeater = "";
-            aux_repeater.append(ui->dmridEdit->text());
-            aux_repeater.append(dmr_repeater);
-            m_dmr = new DMRCodec(callsign, dmrid, dmr_password, dmr_options, aux_repeater.toUInt(), dmr_destid, host, port, ui->AmbeCombo->currentData().toString().simplified(), ui->AudioInCombo->currentText(), ui->AudioOutCombo->currentText());
+            dmr_repeater = ui->dmridEdit->text() + ui->dmrRepeaterId->text();
+
+            if(hostname.startsWith("DMR+")){
+               dmr_options = ui->dmrOptions->text();
+               m_dmr = new DMRCodec(callsign, dmrid, dmr_password, dmr_options, dmr_repeater.toUInt(), dmr_destid, host, port, ui->AmbeCombo->currentData().toString().simplified(), ui->AudioInCombo->currentText(), ui->AudioOutCombo->currentText());
+            } else {
+               dmr_options = "";
+               m_dmr = new DMRCodec(callsign, dmrid, dmr_password, dmr_options, dmr_repeater.toUInt(), dmr_destid, host, port, ui->AmbeCombo->currentData().toString().simplified(), ui->AudioInCombo->currentText(), ui->AudioOutCombo->currentText());
+            }
+
 			m_modethread = new QThread;
 			m_dmr->moveToThread(m_modethread);
 			connect(m_dmr, SIGNAL(update()), this, SLOT(update_dmr_data()));
@@ -1394,13 +1435,13 @@ void DudeStar::process_mute_button()
 	qreal linear_vol = QAudio::convertVolume(v / qreal(100.0),QAudio::LogarithmicVolumeScale,QAudio::LinearVolumeScale);
 	if(muted){
 		muted = false;
-		ui->muteButton->setText("Mute");
+        ui->muteButton->setText("Silencia");
 		emit out_audio_vol_changed(linear_vol);
 		//audio->setVolume(linear_vol);
 	}
 	else{
 		muted = true;
-		ui->muteButton->setText("Unmute");
+        ui->muteButton->setText("Desmuteja");
 		emit out_audio_vol_changed(0.0);
 		//audio->setVolume(0.0);
 	}
@@ -1435,8 +1476,8 @@ void DudeStar::process_input_mute_button()
 
 void DudeStar::update_m17_data()
 {
-	if(connect_status == DISCONNECTED){
-		qDebug() << "update_m17_data() called after disconnected";
+    if(connect_status == DISCONNECTED){
+        qDebug() << "update_m17_data() called after disconnected";
 		return;
 	}
 	if((connect_status == CONNECTING) && (m_m17->get_status() == DISCONNECTED)){
@@ -1446,7 +1487,7 @@ void DudeStar::update_m17_data()
 	}
 	if( (connect_status == CONNECTING) && ( m_m17->get_status() == CONNECTED_RW)){
 		connect_status = CONNECTED_RW;
-        ui->connectButton->setText("Desconnectar");
+        ui->connectButton->setText("Desconnecta");
 		ui->connectButton->setEnabled(true);
 		ui->AmbeCombo->setEnabled(false);
 		ui->AudioOutCombo->setEnabled(false);
@@ -1461,7 +1502,7 @@ void DudeStar::update_m17_data()
 		ui->checkBoxSWRX->setEnabled(false);
 		ui->checkBoxSWTX->setEnabled(false);
 	}
-	status_txt->setText(" Host: " + m_m17->get_host() + ":" + QString::number( m_m17->get_port()) + " Ping: " + QString::number(m_m17->get_cnt()));
+    status_txt->setText(" Host: " + m_m17->get_host() + ":" + QString::number( m_m17->get_port()) + " Ping: " + QString::number(m_m17->get_cnt()));
 	ui->mycall->setText(m_m17->get_src());
 	ui->urcall->setText(m_m17->get_dst());
 	ui->rptr1->setText(m_m17->get_type());
@@ -1503,7 +1544,7 @@ void DudeStar::update_ysf_data()
 		}
 	}
 
-	status_txt->setText(" Host: " + m_ysf->get_host() + ":" + QString::number( m_ysf->get_port()) + " Ping: " + QString::number(m_ysf->get_cnt()));
+    status_txt->setText(" Host: " + m_ysf->get_host() + ":" + QString::number( m_ysf->get_port()) + " Ping: " + QString::number(m_ysf->get_cnt()));
 	ui->mycall->setText(m_ysf->get_gateway());
 	ui->urcall->setText(m_ysf->get_src());
 	ui->rptr1->setText(m_ysf->get_dst());
@@ -1556,7 +1597,7 @@ void DudeStar::update_nxdn_data()
 			ui->checkBoxSWTX->setEnabled(false);
 		}
 	}
-	status_txt->setText(" Host: " + m_nxdn->get_host() + ":" + QString::number( m_nxdn->get_port()) + " Ping: " + QString::number(m_nxdn->get_cnt()));
+    status_txt->setText(" Host: " + m_nxdn->get_host() + ":" + QString::number( m_nxdn->get_port()) + " Ping: " + QString::number(m_nxdn->get_cnt()));
 	if(m_nxdn->get_src()){
 		ui->mycall->setText(m_dmrids[m_nxdn->get_src()]);
 		ui->urcall->setText(QString::number(m_nxdn->get_src()));
@@ -1592,7 +1633,7 @@ void DudeStar::update_p25_data()
 		ui->checkBoxSWRX->setEnabled(false);
 		ui->checkBoxSWTX->setEnabled(false);
 	}
-	status_txt->setText(" Host: " + m_p25->get_host() + ":" + QString::number( m_p25->get_port()) + " Ping: " + QString::number(m_p25->get_cnt()));
+    status_txt->setText(" Host: " + m_p25->get_host() + ":" + QString::number( m_p25->get_port()) + " Ping: " + QString::number(m_p25->get_cnt()));
 	if(m_p25->get_src()){
 		ui->mycall->setText(m_dmrids[m_p25->get_src()]);
 		ui->urcall->setText(QString::number(m_p25->get_src()));
@@ -1627,6 +1668,8 @@ void DudeStar::update_dmr_data()
 		ui->hostCombo->setEnabled(false);
 		ui->callsignEdit->setEnabled(false);
 		ui->dmridEdit->setEnabled(false);
+        ui->dmrRepeaterId->setEnabled(false);
+        ui->dmrOptions->setEnabled(false);
 		ui->dmrpwEdit->setEnabled(false);
 		ui->txButton->setDisabled(false);
 		//ui->dmrtgEdit->setEnabled(false);
@@ -1639,7 +1682,7 @@ void DudeStar::update_dmr_data()
 			ui->checkBoxSWTX->setEnabled(false);
 		}
 	}
-	status_txt->setText(" Host: " + m_dmr->get_host() + ":" + QString::number( m_dmr->get_port()) + " Ping: " + QString::number(m_dmr->get_cnt()));
+    status_txt->setText(" Host: " + m_dmr->get_host() + ":" + QString::number( m_dmr->get_port()) + " Ping: " + QString::number(m_dmr->get_cnt()));
 	if(m_dmr->get_src()){
 		ui->mycall->setText(m_dmrids[m_dmr->get_src()]);
 		ui->urcall->setText(QString::number(m_dmr->get_src()));
@@ -1687,7 +1730,7 @@ void DudeStar::update_ref_data()
 	ui->rptr2->setText(m_ref->get_rptr2());
 	ui->streamid->setText(QString::number(m_ref->get_streamid(), 16) + " " + QString::number(m_ref->get_fn(), 16));
 	ui->usertxt->setText(m_ref->get_usertxt());
-	status_txt->setText(" Host: " + m_ref->get_host() + ":" + QString::number( m_ref->get_port()) + " Ping: " + QString::number(m_ref->get_cnt()));
+    status_txt->setText(" Host: " + m_ref->get_host() + ":" + QString::number( m_ref->get_port()) + " Ping: " + QString::number(m_ref->get_cnt()));
 }
 
 void DudeStar::update_dcs_data()
@@ -1725,7 +1768,7 @@ void DudeStar::update_dcs_data()
 	ui->rptr2->setText(m_dcs->get_rptr2());
 	ui->streamid->setText(QString::number(m_dcs->get_streamid(), 16) + " " + QString::number(m_dcs->get_fn(), 16));
 	ui->usertxt->setText(m_dcs->get_usertxt());
-	status_txt->setText(" Host: " + m_dcs->get_host() + ":" + QString::number( m_dcs->get_port()) + " Ping: " + QString::number(m_dcs->get_cnt()));
+    status_txt->setText(" Host: " + m_dcs->get_host() + ":" + QString::number( m_dcs->get_port()) + " Ping: " + QString::number(m_dcs->get_cnt()));
 }
 
 void DudeStar::update_xrf_data()
@@ -1762,7 +1805,7 @@ void DudeStar::update_xrf_data()
 	ui->rptr2->setText(m_xrf->get_rptr2());
 	ui->streamid->setText(QString::number(m_xrf->get_streamid(), 16) + " " + QString::number(m_xrf->get_fn(), 16));
 	ui->usertxt->setText(m_xrf->get_usertxt());
-	status_txt->setText(" Host: " + m_xrf->get_host() + ":" + QString::number( m_xrf->get_port()) + " Ping: " + QString::number(m_xrf->get_cnt()));
+    status_txt->setText(" Host: " + m_xrf->get_host() + ":" + QString::number( m_xrf->get_port()) + " Ping: " + QString::number(m_xrf->get_cnt()));
 }
 
 void DudeStar::handleStateChanged(QAudio::State)

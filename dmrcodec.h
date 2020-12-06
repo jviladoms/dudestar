@@ -93,7 +93,7 @@ private:
 	uint32_t m_dmrid;
 	QString m_password;
     QString m_options;
-    uint32_t m_repeaterId;
+    uint32_t m_essid;
 	uint32_t m_srcid;
 	uint32_t m_dstid;
 	uint32_t m_txdstid;

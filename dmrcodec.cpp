@@ -46,12 +46,12 @@ extern cst_voice * register_cmu_us_rms(const char *);
 }
 #endif
 
-DMRCodec::DMRCodec(QString callsign, uint32_t dmrid, QString password, QString options, uint32_t repeaterid, uint32_t dstid, QString host, uint32_t port, QString vocoder, QString audioin, QString audioout) :
+DMRCodec::DMRCodec(QString callsign, uint32_t dmrid, QString password, QString options, uint32_t essid, uint32_t dstid, QString host, uint32_t port, QString vocoder, QString audioin, QString audioout) :
 	m_callsign(callsign),
     m_dmrid(dmrid),
 	m_password(password),
     m_options(options),
-    m_repeaterId(repeaterid),
+    m_essid(essid),
 	m_srcid(0),
 	m_dstid(0),
 	m_txdstid(dstid),
@@ -70,7 +70,7 @@ DMRCodec::DMRCodec(QString callsign, uint32_t dmrid, QString password, QString o
 	m_audioin(audioin),
 	m_audioout(audioout)
 {
-	m_dmrcnt = 0;
+    m_dmrcnt = 0;
 	m_colorcode = 1;
 	m_slot = 2;
 	m_flco = FLCO(0);
@@ -138,10 +138,10 @@ void DMRCodec::process_udp()
 			out[1] = 'P';
 			out[2] = 'T';
             out[3] = 'K';
-            out[4] = (m_repeaterId  >> 24) & 0xff;
-            out[5] = (m_repeaterId  >> 16) & 0xff;
-            out[6] = (m_repeaterId  >> 8) & 0xff;
-            out[7] = (m_repeaterId  >> 0) & 0xff;
+            out[4] = (m_essid  >> 24) & 0xff;
+            out[5] = (m_essid  >> 16) & 0xff;
+            out[6] = (m_essid  >> 8) & 0xff;
+            out[7] = (m_essid  >> 0) & 0xff;
 			sha256.buffer((unsigned char *)in.data(), (unsigned int)(m_password.size() + sizeof(uint32_t)), (unsigned char *)out.data() + 8U);
 			break;
         case DMR_AUTH:
@@ -151,10 +151,10 @@ void DMRCodec::process_udp()
 			buffer[1] = 'P';
 			buffer[2] = 'T';
 			buffer[3] = 'C';
-            buffer[4] = (m_repeaterId  >> 24) & 0xff;
-            buffer[5] = (m_repeaterId  >> 16) & 0xff;
-            buffer[6] = (m_repeaterId  >> 8) & 0xff;
-            buffer[7] = (m_repeaterId  >> 0) & 0xff;
+            buffer[4] = (m_essid  >> 24) & 0xff;
+            buffer[5] = (m_essid  >> 16) & 0xff;
+            buffer[6] = (m_essid  >> 8) & 0xff;
+            buffer[7] = (m_essid  >> 0) & 0xff;
 
 			m_status = DMR_CONF;
 			char latitude[20U];
@@ -301,10 +301,10 @@ void DMRCodec::hostname_lookup(QHostInfo i)
 		out.append('P');
 		out.append('T');
 		out.append('L');
-        out.append((m_repeaterId  >> 24) & 0xff);
-        out.append((m_repeaterId  >> 16) & 0xff);
-        out.append((m_repeaterId  >> 8) & 0xff);
-        out.append((m_repeaterId  >> 0) & 0xff);
+        out.append((m_essid  >> 24) & 0xff);
+        out.append((m_essid  >> 16) & 0xff);
+        out.append((m_essid  >> 8) & 0xff);
+        out.append((m_essid  >> 0) & 0xff);
 		m_address = i.addresses().first();
 		m_udp = new QUdpSocket(this);
 		connect(m_udp, SIGNAL(readyRead()), this, SLOT(process_udp()));
@@ -331,10 +331,10 @@ void DMRCodec::send_ping()
 	QByteArray out;
 	char tag[] = { 'R','P','T','P','I','N','G' };
 	out.append(tag, 7);
-    out.append((m_repeaterId  >> 24) & 0xff);
-    out.append((m_repeaterId  >> 16) & 0xff);
-    out.append((m_repeaterId  >> 8) & 0xff);
-    out.append((m_repeaterId  >> 0) & 0xff);
+    out.append((m_essid  >> 24) & 0xff);
+    out.append((m_essid  >> 16) & 0xff);
+    out.append((m_essid  >> 8) & 0xff);
+    out.append((m_essid  >> 0) & 0xff);
 	m_udp->writeDatagram(out, m_address, m_port);
 #ifdef DEBUG
 	fprintf(stderr, "PING: ");
@@ -354,11 +354,11 @@ void DMRCodec::send_options()
     buffer[1] = 'P';
     buffer[2] = 'T';
     buffer[3] = 'O';
-    buffer[4] = (m_repeaterId  >> 24) & 0xff;
-    buffer[5] = (m_repeaterId  >> 16) & 0xff;
-    buffer[6] = (m_repeaterId  >> 8) & 0xff;
-    buffer[7] = (m_repeaterId  >> 0) & 0xff;
-    qDebug() << "m_repeaterId " << m_repeaterId ;
+    buffer[4] = (m_essid  >> 24) & 0xff;
+    buffer[5] = (m_essid  >> 16) & 0xff;
+    buffer[6] = (m_essid  >> 8) & 0xff;
+    buffer[7] = (m_essid  >> 0) & 0xff;
+    qDebug() << "m_essid " << m_essid ;
     qDebug() << "m_options" << m_options.toStdString().c_str();
     ::sprintf(buffer + 8U, m_options.toStdString().c_str());
     out.append(buffer);
@@ -373,10 +373,10 @@ void DMRCodec::send_disconnect()
 	out.append('T');
 	out.append('C');
 	out.append('L');
-    out.append((m_repeaterId  >> 24) & 0xff);
-    out.append((m_repeaterId  >> 16) & 0xff);
-    out.append((m_repeaterId  >> 8) & 0xff);
-    out.append((m_repeaterId  >> 0) & 0xff);
+    out.append((m_essid  >> 24) & 0xff);
+    out.append((m_essid  >> 16) & 0xff);
+    out.append((m_essid  >> 8) & 0xff);
+    out.append((m_essid  >> 0) & 0xff);
 	m_udp->writeDatagram(out, m_address, m_port);
 #ifdef DEBUG
 	fprintf(stderr, "SEND: ");
@@ -551,10 +551,10 @@ void DMRCodec::build_frame()
 	m_dmrFrame[8U]  = m_txdstid >> 16;
 	m_dmrFrame[9U]  = m_txdstid >> 8;
 	m_dmrFrame[10U] = m_txdstid >> 0;
-    m_dmrFrame[11U]  = m_repeaterId  >> 24;
-    m_dmrFrame[12U]  = m_repeaterId  >> 16;
-    m_dmrFrame[13U]  = m_repeaterId  >> 8;
-    m_dmrFrame[14U]  = m_repeaterId  >> 0;
+    m_dmrFrame[11U]  = m_essid  >> 24;
+    m_dmrFrame[12U]  = m_essid  >> 16;
+    m_dmrFrame[13U]  = m_essid  >> 8;
+    m_dmrFrame[14U]  = m_essid  >> 0;
 
 	m_dmrFrame[15U] = (m_slot == 1U) ? 0x00U : 0x80U;
 	m_dmrFrame[15U] |= (m_flco == FLCO_GROUP) ? 0x00U : 0x40U;
@@ -787,9 +787,9 @@ void DMRCodec::lc_get_data(uint8_t *bytes)
 	bytes[3U] = m_txdstid >> 16;
 	bytes[4U] = m_txdstid >> 8;
 	bytes[5U] = m_txdstid >> 0;
-    bytes[6U] = m_repeaterId  >> 16;
-    bytes[7U] = m_repeaterId  >> 8;
-    bytes[8U] = m_repeaterId  >> 0;
+    bytes[6U] = m_dmrid  >> 16;
+    bytes[7U] = m_dmrid  >> 8;
+    bytes[8U] = m_dmrid  >> 0;
 }
 
 void DMRCodec::full_lc_encode(uint8_t* data, uint8_t type)
